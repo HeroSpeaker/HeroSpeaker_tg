@@ -1,20 +1,16 @@
-import io
 import logging
 
 from aiogram import Bot, Dispatcher, executor, types
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.state import State, StatesGroup
-from aiogram.types import ParseMode
-from keyboards import keyboards
+from pydub import AudioSegment
+
 from commands import *
+from keyboards import keyboards
 from messages import *
 from model import our_tts as model
-from pydub import AudioSegment
 from secret import API
-AudioSegment.converter = "C:\\Users\\eliza\\trading\\MAToolkit\\HeroSpeaker_tg\\ffmpeg\\ffmpeg.exe"
-AudioSegment.ffmpeg = "C:\\Users\\eliza\\trading\\MAToolkit\\HeroSpeaker_tg\\ffmpeg\\ffmpeg.exe"
-AudioSegment.ffprobe ="C:\\Users\\eliza\\trading\\MAToolkit\\HeroSpeaker_tg\\ffmpeg\\ffprobe.exe"
 
 # Configure logging
 # This sets the root logger to write to stdout (your console).
