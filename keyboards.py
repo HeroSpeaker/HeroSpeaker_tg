@@ -1,8 +1,10 @@
-from aiogram.types import InlineKeyboardMarkup
+from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 from commands import *
+from messages import *
 
 # button_menu = InlineKeyboardButton(text=message_menu, callback_data=command_menu)
+button_repeat = InlineKeyboardButton(text=message_repeat, callback_data=command_start)
 # button_search = InlineKeyboardButton(text=button_name_search, callback_data=command_search)
 # button_tracked_list = InlineKeyboardButton(text=button_name_tracked_list, callback_data=command_show_tracked_items)
 # button_saved_list = InlineKeyboardButton(text=button_name_saved_list, callback_data=command_show_saved_items)
@@ -18,7 +20,7 @@ from commands import *
 #
 #
 keyboard_command_start = InlineKeyboardMarkup(row_width=2)
-# keyboard_command_start.add(button_search)
+keyboard_command_start.add(button_repeat)
 # keyboard_command_start.add(button_tracked_list, button_saved_list)
 #
 #

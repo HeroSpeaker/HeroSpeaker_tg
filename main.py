@@ -55,48 +55,8 @@ class ReqState(StatesGroup):
 @dp.message_handler(commands=command_start)
 async def start(message: types.Message):
     logger.info(f'Request: command_start from {message.chat.id}')
-    await message.answer(message_start, reply_markup=keyboards[command_start])
+    await message.answer(message_start)
     await ReqState.get_text.set()
-
-
-# @dp.callback_query_handler(lambda query: query.data == command_menu)
-# async def menu(call: types.CallbackQuery):
-#     await call.message.answer(text_message_menu, reply_markup=keyboards[command_menu])
-#
-#
-# @dp.callback_query_handler(lambda query: query.data == command_show_saved_items)
-# async def show_saved_items(call: types.CallbackQuery):
-#     message = call.message
-#     movies = db.list_saved_items(message.chat.id)
-#     message_text = ''
-#     for movie in movies:
-#         message_text += '- ' + movie.name + '\n'
-#     if message_text == '':
-#         message_text = message_not_saved_items
-#     else:
-#         message_text = message_saved_items_list + message_text
-#     print('Movies', movies)
-#     await message.answer(message_text, reply_markup=keyboards[command_show_saved_items], parse_mode=ParseMode.MARKDOWN)
-#
-#
-# @dp.callback_query_handler(lambda query: query.data == command_show_tracked_items)
-# async def show_tracked_items(call: types.CallbackQuery):
-#     message = call.message
-#     movies = db.list_tracked_items(message.chat.id)
-#     message_text = ''
-#     for i, movie in enumerate(movies):
-#         message_text += str(i + 1) + '. <a href="' + movie.href + '">' + movie.name + '</a>\n\n'
-#     if message_text == '':
-#         message_text = message_not_tracked_items
-#     else:
-#         message_text = message_tracked_items_list + message_text
-#     await message.answer(message_text, reply_markup=keyboards[command_show_tracked_items],
-#                          parse_mode=ParseMode.HTML, disable_web_page_preview=True)
-#
-#
-# @dp.callback_query_handler(lambda query: query.data == command_search_more)
-# async def search_more(call: types.CallbackQuery):
-#     await search(call.message)
 
 
 @dp.message_handler(state=ReqState.get_text)
@@ -123,14 +83,15 @@ async def get_audio(message: types.Message, state: FSMContext):
         await message.answer(message_error_file_type, reply_markup=keyboards[command_start])
         return
 
-    print(f'{filename}.{audio_format}')
-    sound = AudioSegment.from_file(f'{filename}.{audio_format}', "wav")
+    await message.answer(message_wait)
+
+    sound = AudioSegment.from_file(f'{filename}.{audio_format}', f"{audio_format}")
     sound.export(f'{filename}.wav', format="wav")
 
     out_path = model.fit([f'{filename}.wav'], open(f'texts/text_{message.chat.id}.txt').read(),
                          out_path=f'results/result_{message.chat.id}.wav')
-    await message.answer_audio(open(out_path, "rb"), caption="Result")
-    await message.answer(message_result, reply_markup=keyboards[command_start])
+    await message.answer_audio(open(out_path, "rb"), title="hero_speaker", reply_markup=keyboards[command_start])
+    # await message.answer(message_result, reply_markup=keyboards[command_start])
     await state.finish()
 
 
