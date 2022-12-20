@@ -50,6 +50,7 @@ dp = Dispatcher(bot, storage=MemoryStorage())
 class ReqState(StatesGroup):
     get_text = State()
     get_audio = State()
+    end = State()
 
 
 @dp.message_handler(commands=command_start)
@@ -131,6 +132,7 @@ async def get_audio(message: types.Message, state: FSMContext):
                          out_path=f'results/result_{message.chat.id}.wav')
     await message.answer_audio(open(out_path, "rb"), caption="Result")
     await message.answer(message_result, reply_markup=keyboards[command_start])
+    await ReqState.end.set()
 
 
 # @dp.callback_query_handler(lambda query: query.data.split(' ')[0] == command_track_item)
