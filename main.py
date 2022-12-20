@@ -29,16 +29,6 @@ logging.basicConfig(level=logging.NOTSET)
 
 logger = logging.getLogger('MovieNotifier')
 
-#
-# class StatMiddleware(BaseMiddleware):
-#
-#     def __init__(self):
-#         super(StatMiddleware, self).__init__()
-#
-#     async def on_process_message(self, message: types.Message, data: dict):
-#         await logger.write_logs(self._manager.bot.id, message, parse_text=True)
-
-
 # Initialize bot and dispatcher
 bot = Bot(token=API)
 dp = Dispatcher(bot, storage=MemoryStorage())
@@ -52,11 +42,26 @@ class ReqState(StatesGroup):
     get_audio = State()
 
 
-@dp.message_handler(commands=command_start)
-async def start(message: types.Message):
-    logger.info(f'Request: command_start from {message.chat.id}')
+async def send_start_message(message: types.Message):
     await message.answer(message_start)
     await ReqState.get_text.set()
+
+
+@dp.message_handler(commands=command_start)
+async def start(message: types.Message):
+    await send_start_message(message)
+
+
+@dp.callback_query_handler(lambda query: query.data == command_start, state=ReqState.get_audio)
+async def repeat(call: types.CallbackQuery, state: FSMContext):
+    logger.info(f'Request: repeat from {call.message.chat.id}')
+    await send_start_message(call.message)
+
+
+@dp.callback_query_handler(lambda query: query.data == command_start)
+async def repeat(call: types.CallbackQuery):
+    logger.info(f'Request: repeat from {call.message.chat.id}')
+    await send_start_message(call.message)
 
 
 @dp.message_handler(state=ReqState.get_text)
